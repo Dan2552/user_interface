@@ -20,6 +20,10 @@ module UserInterface
       new(0, 0, 255, 255)
     end
 
+    def self.clear
+      new(0, 0, 0, 0)
+    end
+
     def initialize(red, green, blue, alpha)
       @red = red
       @green = green

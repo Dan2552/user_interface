@@ -4,7 +4,7 @@ module UserInterface
       super
       @graphics_context = CoreGraphics::Context.new(frame.position, frame.size)
       @hidden = true
-      @background_color = UserInterface::Color.black
+      @background_color = UserInterface::Color.white
     end
 
     attr_reader :graphics_context
@@ -20,10 +20,12 @@ module UserInterface
       @view_controller = value
       @view_controller.view_will_appear
       add_subview(@view_controller.view)
+
       @view_controller.view.frame = CoreGraphics::Rectangle.new(
         CoreGraphics::Point.new(0, 0),
         frame.size
       )
+
       @view_controller.view_did_appear
     end
 

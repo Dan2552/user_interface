@@ -31,6 +31,10 @@ describe UserInterface::Window do
 
     it "can be set" do
       view_controller = UserInterface::ViewController.new
+
+      expect(described_instance)
+        .to receive(:add_subview)
+        .with(view_controller.view)
       described_instance.view_controller = view_controller
 
       expect(subject).to eq(view_controller)

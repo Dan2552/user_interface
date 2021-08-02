@@ -27,6 +27,50 @@ describe UserInterface::Color do
     end
   end
 
+  describe ".red" do
+    subject { described_class.red }
+
+    it "is red" do
+      expect(subject.red).to eq(255)
+      expect(subject.green).to eq(0)
+      expect(subject.blue).to eq(0)
+      expect(subject.alpha).to eq(255)
+    end
+  end
+
+  describe ".green" do
+    subject { described_class.green }
+
+    it "is green" do
+      expect(subject.red).to eq(0)
+      expect(subject.green).to eq(255)
+      expect(subject.blue).to eq(0)
+      expect(subject.alpha).to eq(255)
+    end
+  end
+
+  describe ".blue" do
+    subject { described_class.blue }
+
+    it "is blue" do
+      expect(subject.red).to eq(0)
+      expect(subject.green).to eq(0)
+      expect(subject.blue).to eq(255)
+      expect(subject.alpha).to eq(255)
+    end
+  end
+
+  describe ".clear" do
+    subject { described_class.clear }
+
+    it "is clear" do
+      expect(subject.red).to eq(0)
+      expect(subject.green).to eq(0)
+      expect(subject.blue).to eq(0)
+      expect(subject.alpha).to eq(0)
+    end
+  end
+
   describe "#red" do
     subject { described_instance.red }
     it { is_expected.to eq(red) }
@@ -45,6 +89,16 @@ describe UserInterface::Color do
   describe "#alpha" do
     subject { described_instance.alpha }
     it { is_expected.to eq(alpha) }
+  end
+
+  describe "#to_s" do
+    subject { described_instance.to_s }
+    it { is_expected.to be_a(String) }
+  end
+
+  describe "#inspect" do
+    subject { described_instance.inspect }
+    it { is_expected.to be_a(String) }
   end
 
   describe "#==" do

@@ -11,6 +11,6 @@ MRuby::Gem::Specification.new("mruby-user_interface") do |spec|
   spec.cc.flags << "-I#{sdl_install}/include/SDL2"
   spec.linker.flags << "-L#{sdl_install}/lib -lSDL2"
 
-  spec.add_dependency("mruby-core_graphics", path: File.join(Dir.pwd, "../core_graphics"))
-  spec.add_dependency("mruby-core_structures", path: File.join(Dir.pwd, "../core_structures"))
+  spec.add_dependency("mruby-core_graphics", path: File.join(__dir__, "../core_graphics"))
+  spec.add_dependency("mruby-core_structures", path: File.join(__dir__, "../core_structures"))
 end

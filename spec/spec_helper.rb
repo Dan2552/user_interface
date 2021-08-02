@@ -8,6 +8,10 @@ end
 
 # Stubs for third party dependencies
 module CoreGraphics
+  class Font
+    def initialize(_, _)
+    end
+  end
   class Layer
     def initialize(_, _)
     end
@@ -20,6 +24,10 @@ module CoreGraphics
   end
   class Context
     def initialize(_, _)
+    end
+
+    def render_scale
+      2
     end
   end
   class Point

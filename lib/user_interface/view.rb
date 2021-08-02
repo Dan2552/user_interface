@@ -2,6 +2,7 @@ module UserInterface
   class View
     def initialize(frame)
       @frame = frame
+      @bounds = frame
       @z_index = 0
       @background_color = UserInterface::Color.white
       @subviews = [] #CoreStructures::BinarySortInsertArray.new(:z_index)
@@ -9,6 +10,7 @@ module UserInterface
     end
 
     attr_reader :frame
+    attr_reader :bounds
     attr_reader :background_color
     attr_reader :z_index
     attr_reader :layer
@@ -22,8 +24,27 @@ module UserInterface
     end
 
     def frame=(value)
+      return if @frame == value
+
+      if value.size != bounds.size
+        @bounds = CoreGraphics::Rectangle.new(bounds.position, value.size)
+      end
+
       @frame = value
+      @layer = nil
       set_needs_display
+    end
+
+    def bounds=(value)
+      return if @bounds == value
+
+      if value.size != frame.size
+        @frame = CoreGraphics::Rectangle.new(frame.position, value.size)
+        @layer = nil
+        set_needs_display
+      end
+
+      @bounds = value
     end
 
     def add_subview(child_view)
@@ -52,7 +73,13 @@ module UserInterface
       @layer ||= begin
         return nil unless window
         @layer_window = window
-        layer = CoreGraphics::Layer.new(window.graphics_context, frame.size)
+        layer = CoreGraphics::Layer.new(
+          window.graphics_context,
+          CoreGraphics::Size.new(
+            frame.size.width * window.graphics_context.render_scale,
+            frame.size.height * window.graphics_context.render_scale
+          )
+        )
         layer.delegate = self
         layer
       end

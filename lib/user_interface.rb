@@ -12,6 +12,8 @@ require "user_interface/run_loop"
 require "user_interface/timer"
 require "user_interface/version"
 require "user_interface/window"
+require "user_interface/image_view"
+require "user_interface/scroll_view"
 
 module UserInterface
   class ExitError < StandardError; end

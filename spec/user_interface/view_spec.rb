@@ -1,5 +1,5 @@
 describe UserInterface::View do
-  let(:frame) { double(:frame, position: double(:position), size: double(:size)) }
+  let(:frame) { double(:frame, position: double(:position), size: double(:size, width: 200, height: 400)) }
   let(:described_instance) { described_class.new(frame) }
 
   let(:subviews) do
@@ -49,6 +49,8 @@ describe UserInterface::View do
         end
 
         it "doesn't call #set_needs_display on the super view" do
+          described_instance.instance_variable_set(:@superview, double(:superview))
+
           expect(described_instance.superview)
             .to_not receive(:set_needs_display)
 
@@ -89,6 +91,52 @@ describe UserInterface::View do
     it { is_expected.to eq(frame) }
   end
 
+  describe "#bounds" do
+    subject { described_instance.bounds }
+    it { is_expected.to eq(frame) }
+  end
+
+  describe "#bounds=" do
+    let(:another_bounds) { double(:bounds, position: double(:position), size: double(:size)) }
+    subject { described_instance.bounds = another_bounds }
+
+    it "edits #bounds" do
+      expect { subject }
+        .to change { described_instance.bounds }
+        .from(frame)
+        .to(another_bounds)
+    end
+
+    context "when the size is the same" do
+      let(:another_bounds) { double(:bounds, position: double(:position), size: frame.size) }
+      it "doesn't change the frame size" do
+        expect { subject }
+          .to_not change { described_instance.frame }
+      end
+    end
+
+    context "when the size is different" do
+      before do
+        expect(frame.size)
+          .to_not eq(another_bounds.size)
+      end
+
+      it "changes the frame size" do
+        new_rect = double(:new_rect)
+
+        expect(CoreGraphics::Rectangle)
+          .to receive(:new)
+          .with(frame.position, another_bounds.size)
+          .and_return(new_rect)
+
+        expect { subject }
+          .to change { described_instance.frame }
+          .from(frame)
+          .to(new_rect)
+      end
+    end
+  end
+
   describe "#frame=" do
     let(:another_frame) { double(:frame, position: double(:position), size: double(:size)) }
     subject { described_instance.frame = another_frame }
@@ -105,6 +153,51 @@ describe UserInterface::View do
         .to receive(:set_needs_display)
 
       subject
+    end
+
+    context "when the size is the same" do
+      let(:another_frame) { double(:frame, position: double(:position), size: frame.size) }
+
+      it "doesn't change the bounds size" do
+        expect { subject }
+          .to_not change { described_instance.bounds }
+      end
+    end
+
+    context "when the size is different" do
+      before do
+        expect(frame.size)
+          .to_not eq(another_frame.size)
+      end
+
+      it "changes the bounds size" do
+        new_rect = double(:new_rect, position: double(:new_position), size: double(:new_size))
+
+        expect(CoreGraphics::Rectangle)
+          .to receive(:new)
+          .with(frame.position, another_frame.size)
+          .and_return(new_rect)
+
+        expect { subject }
+          .to change { described_instance.bounds }
+          .from(frame)
+          .to(new_rect)
+      end
+    end
+
+    context "if there's a layer" do
+      let(:layer) { double(:layer, needs_display?: true) }
+
+      before do
+        described_instance.instance_variable_set(:@layer, layer)
+      end
+
+      it "nils it out so it can be regenerated" do
+        expect { subject }
+          .to change { described_instance.instance_variable_get(:@layer) }
+          .from(layer)
+          .to(nil)
+      end
     end
   end
 
@@ -157,6 +250,7 @@ describe UserInterface::View do
     it { is_expected.to eq(nil) }
 
     context "when added to a window" do
+      let(:frame) { double(:frame, position: double(:position), size: double(:size, width: 200, height: 400)) }
       let(:window) { UserInterface::Window.new(frame) }
       let(:add_subview) do
         window.add_subview(described_instance)
@@ -169,11 +263,19 @@ describe UserInterface::View do
       it "builds a layer of the size of the view" do
         layer = double(:layer, set_needs_display: nil, needs_display?: false)
 
+        scaled_size = double(:scaled_size)
+        expect(CoreGraphics::Size)
+          .to receive(:new)
+          .with(
+            frame.size.width * 2,
+            frame.size.height * 2
+          ).and_return(scaled_size)
+
         expect(CoreGraphics::Layer)
           .to receive(:new)
           .with(
             window.graphics_context,
-            frame.size
+            scaled_size
           )
           .and_return(layer)
 
