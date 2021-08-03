@@ -5,12 +5,24 @@ MRuby::Gem::Specification.new("mruby-user_interface") do |spec|
   spec.authors = "Daniel Inkpen"
   spec.rbfiles = files("user_interface")
 
-  # TODO: figure out this, especially to be different per platform?
-  sdl_install = "/Users/dan2552/.avian/build/desktop/install"
+  # conf.cc do |cc|
+  #   cc.flags << "-I/_path_/_to_/_SDL_/include/SDL2"
+  # end
+  #
+  # conf.linker do |linker|
+  #   linker.flags << "-L/_path_/_to_/_SDL_/lib -lSDL2 -lSDL2_image -lSDL2_ttf"
+  # end
+  spec.requirements = "SDL in compiler and linker flags"
 
-  spec.cc.flags << "-I#{sdl_install}/include/SDL2"
-  spec.linker.flags << "-L#{sdl_install}/lib -lSDL2"
+  if (path = ENV["CORE_GRAPHICS_PATH"])
+    spec.add_dependency("mruby-core_graphics", path: path)
+  else
+    spec.add_dependency("mruby-core_graphics", github: "Dan2552/core_graphics")
+  end
 
-  spec.add_dependency("mruby-core_graphics", path: File.join(__dir__, "../core_graphics"))
-  spec.add_dependency("mruby-core_structures", path: File.join(__dir__, "../core_structures"))
+  if (path = ENV["CORE_STRUCTURES_PATH"])
+    spec.add_dependency("mruby-core_structures", path: path)
+  else
+    spec.add_dependency("mruby-core_structures", github: "Dan2552/core_structures")
+  end
 end
