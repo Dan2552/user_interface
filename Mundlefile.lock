@@ -1,1 +1,17 @@
-c18635b9727d2055a8b686f095a05cf9
+# https://github.com/mruby/mruby 3.0.0
+
+MRuby::Build.new do |conf|
+  toolchain :clang
+
+  conf.cc do |cc|
+    cc.flags << "-I/opt/homebrew/opt/sdl2/include/SDL2 -I/opt/homebrew/opt/sdl2_image/include/SDL2 -I/opt/homebrew/opt/sdl2_ttf/include/SDL2"
+  end
+
+  conf.linker do |linker|
+    linker.flags << "-L/opt/homebrew/opt/sdl2/lib -L/opt/homebrew/opt/sdl2_image/lib -L/opt/homebrew/opt/sdl2_ttf/lib -lSDL2 -lSDL2_image -lSDL2_ttf"
+  end
+
+  conf.gembox "default"
+  conf.gem :github => "Dan2552/mruby-irb_like_debugger"
+  conf.gem :path => "/Users/dan2552/Dropbox/experiments/avian/pelican/user_interface"
+end
